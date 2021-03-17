@@ -1,5 +1,4 @@
-﻿.vs
-
+﻿**/.vs/
 # Added by gemignore. Snippet 'Global/OSX'
 .DS_Store
 
@@ -21,8 +20,8 @@ Desktop.ini
 
 # Added by gemignore. Snippet 'CSharp'
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
-bin
-obj
+**/bin
+**/obj
 
 # mstest test results
 TestResults

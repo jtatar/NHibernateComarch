@@ -1,16 +1,17 @@
 ﻿using NHibernate;
 using System;
+using System.Linq;
 using ZadanieRekrutacyjne.Domain;
 
 namespace ZadanieRekrutacyjne
 {
-    class NHibernatePersonRepository : IPersonRepository
+    public class NHibernatePersonRepository : IPersonRepository
     {
         public void Save(Person person)
         {
-            using(ISession session = NHibernateHelper.OpenSession())
+            using (ISession session = NHibernateHelper.OpenSession())
             {
-                using(ITransaction transaction = session.BeginTransaction())
+                using (ITransaction transaction = session.BeginTransaction())
                 {
                     session.Save(person);
                     transaction.Commit();
@@ -38,14 +39,16 @@ namespace ZadanieRekrutacyjne
             }
         }
 
-        public void Delete(Person person)
+        public void Delete(Guid id)
         {
             using (ISession session = NHibernateHelper.OpenSession())
             {
                 using (ITransaction transaction = session.BeginTransaction())
                 {
+                    var person = session.Get<Person>(id);
                     session.Delete(person);
                     transaction.Commit();
+
                 }
             }
         }

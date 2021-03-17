@@ -6,14 +6,33 @@ using ZadanieRekrutacyjne.Mappings;
 
 namespace ZadanieRekrutacyjne
 {
-    class Program
+    public class Program
     {
+        private static Program _instance;
+        private static IPersonRepository _personRepo;
+
+        public static Program GetInstance()
+        {
+            if (_instance == null)
+            {
+                _instance = new Program();
+            }
+            return _instance;
+        }
+
+        public IPersonRepository GetPersonRepo()
+        {
+            if (_personRepo == null)
+            {
+                _personRepo = new NHibernatePersonRepository();
+            }
+            return _personRepo;
+        }
         static void Main(string[] args)
         {
-           
             var person = new Person
             {
-                FirstName = "Test",
+                FirstName = "New",
                 LastName = "Kees",
                 Age = 25
             };
@@ -23,7 +42,6 @@ namespace ZadanieRekrutacyjne
             _personRepo = new NHibernatePersonRepository();
             _personRepo.Save(person);
             Console.WriteLine(person.Id);
-            Console.WriteLine("Hello World!");
         }
     }
 }

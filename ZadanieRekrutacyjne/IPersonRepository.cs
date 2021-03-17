@@ -12,7 +12,7 @@ namespace ZadanieRekrutacyjne
         Person Get(Guid id);
         void Save(Person person);
         void Update(Person person);
-        void Delete(Person person);
+        void Delete(Guid id);
         long RowCount();
     }
 }
