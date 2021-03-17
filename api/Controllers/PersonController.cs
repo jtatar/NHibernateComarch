@@ -51,5 +51,26 @@ namespace api.Controllers
             this._personRepo.Update(person);
             return Ok();
         }
+
+        [HttpGet("age/{age:int}")]
+        public IActionResult GetByAge(int age)
+        {
+            Person[] people = this._personRepo.GetByAge(age);
+            return Ok(people);
+        }
+
+        [HttpGet("oldest/{amount:int}")]
+        public IActionResult GetOldest(int amount)
+        {
+            Person[] people = this._personRepo.GetOldest(amount);
+            return Ok(people);
+        }
+
+        [HttpGet("allwithout/{amountToSkip:int}")]
+        public IActionResult GetAllWithoutOldest(int amountToSkip)
+        {
+            Person[] people = this._personRepo.GetAllWithoutOldest(amountToSkip);
+            return Ok(people);
+        }
     }
 }

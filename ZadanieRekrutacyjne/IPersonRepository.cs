@@ -14,5 +14,8 @@ namespace ZadanieRekrutacyjne
         void Update(Person person);
         void Delete(Guid id);
         long RowCount();
+        Person[] GetByAge(int age);
+        Person[] GetOldest(int amount);
+        Person[] GetAllWithoutOldest(int amountToSkip);
     }
 }

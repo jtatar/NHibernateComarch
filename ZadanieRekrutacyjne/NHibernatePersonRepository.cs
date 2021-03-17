@@ -53,6 +53,50 @@ namespace ZadanieRekrutacyjne
             }
         }
 
+        public Person[] GetByAge(int age)
+        {
+            using (ISession session = NHibernateHelper.OpenSession())
+            {
+                using (ITransaction transaction = session.BeginTransaction())
+                {
+                    IQueryable<Person> people = session.Query<Person>()
+                       .Where(c => c.Age == age);
+                    return people.ToArray();
+
+                }
+            }
+        }
+
+        public Person[] GetOldest(int amount)
+        {
+            using (ISession session = NHibernateHelper.OpenSession())
+            {
+                using (ITransaction transaction = session.BeginTransaction())
+                {
+                    IQueryable<Person> people = session.Query<Person>()
+                        .OrderByDescending(c => c.Age)
+                        .Take(amount);
+                    return people.ToArray();
+                }
+            }
+        }
+
+        public Person[] GetAllWithoutOldest(int amountToSkip)
+        {
+            using (ISession session = NHibernateHelper.OpenSession())
+            {
+                using (ITransaction transaction = session.BeginTransaction())
+                {
+                    IQueryable<Person> people = session.Query<Person>()
+                        .OrderByDescending(c => c.Age)
+                        .Skip(amountToSkip);
+                    return people.ToArray();
+
+                }
+            }
+        }
+
+
         public long RowCount()
         {
             using (ISession session = NHibernateHelper.OpenSession())
