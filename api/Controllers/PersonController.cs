@@ -1,13 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ZadanieRekrutacyjne.Domain;
 using ZadanieRekrutacyjne;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using NHibernate.Tool.hbm2ddl;
 
 namespace api.Controllers
 {
@@ -20,7 +15,7 @@ namespace api.Controllers
 
         public PersonController(ILogger<PersonController> logger)
         {
-            _personRepo = ZadanieRekrutacyjne.Program.GetInstance().GetPersonRepo();
+            _personRepo = ZadanieRekrutacyjne.NhibernateMain.GetInstance().GetPersonRepo();
             _logger = logger;
         }
 

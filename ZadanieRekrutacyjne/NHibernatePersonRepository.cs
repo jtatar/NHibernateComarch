@@ -95,14 +95,5 @@ namespace ZadanieRekrutacyjne
                 }
             }
         }
-
-
-        public long RowCount()
-        {
-            using (ISession session = NHibernateHelper.OpenSession())
-            {
-                return session.QueryOver<Person>().RowCountInt64();
-            }
-        }
     }
 }
