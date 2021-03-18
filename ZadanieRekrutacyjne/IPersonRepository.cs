@@ -10,9 +10,9 @@ namespace ZadanieRekrutacyjne
     public interface IPersonRepository
     {
         Person Get(Guid id);
-        void Save(Person person);
-        void Update(Person person);
-        void Delete(Guid id);
+        Guid Save(Person person);
+        Person Update(Person person);
+        Boolean Delete(Guid id);
         Person[] GetByAge(int age);
         Person[] GetOldest(int amount);
         Person[] GetAllWithoutOldest(int amountToSkip);

@@ -7,14 +7,13 @@ namespace ZadanieRekrutacyjne
 {
     public class NHibernatePersonRepository : IPersonRepository
     {
-        public void Save(Person person)
+        public Guid Save(Person person)
         {
             using (ISession session = NHibernateHelper.OpenSession())
             {
                 using (ITransaction transaction = session.BeginTransaction())
                 {
-                    session.Save(person);
-                    transaction.Commit();
+                    return SavePerson(person, session, transaction);
                 }
             }
         }
@@ -23,32 +22,28 @@ namespace ZadanieRekrutacyjne
         {
             using (ISession session = NHibernateHelper.OpenSession())
             {
-                return session.Get<Person>(id);
+                return GetPerson(id, session);
             }
         }
 
-        public void Update(Person person)
+        public Person Update(Person person)
         {
             using (ISession session = NHibernateHelper.OpenSession())
             {
                 using (ITransaction transaction = session.BeginTransaction())
                 {
-                    session.Update(person);
-                    transaction.Commit();
+                    return UpdatePerson(person, session, transaction);
                 }
             }
         }
 
-        public void Delete(Guid id)
+        public Boolean Delete(Guid id)
         {
             using (ISession session = NHibernateHelper.OpenSession())
             {
                 using (ITransaction transaction = session.BeginTransaction())
                 {
-                    var person = session.Get<Person>(id);
-                    session.Delete(person);
-                    transaction.Commit();
-
+                    return DeletePerson(id, session, transaction);
                 }
             }
         }
@@ -59,10 +54,7 @@ namespace ZadanieRekrutacyjne
             {
                 using (ITransaction transaction = session.BeginTransaction())
                 {
-                    IQueryable<Person> people = session.Query<Person>()
-                       .Where(c => c.Age == age);
-                    return people.ToArray();
-
+                    return GetPeopleByAge(age, session, transaction);
                 }
             }
         }
@@ -73,10 +65,7 @@ namespace ZadanieRekrutacyjne
             {
                 using (ITransaction transaction = session.BeginTransaction())
                 {
-                    IQueryable<Person> people = session.Query<Person>()
-                        .OrderByDescending(c => c.Age)
-                        .Take(amount);
-                    return people.ToArray();
+                    return GetOldestPeople(amount, session, transaction);
                 }
             }
         }
@@ -87,12 +76,117 @@ namespace ZadanieRekrutacyjne
             {
                 using (ITransaction transaction = session.BeginTransaction())
                 {
-                    IQueryable<Person> people = session.Query<Person>()
-                        .OrderByDescending(c => c.Age)
-                        .Skip(amountToSkip);
-                    return people.ToArray();
-
+                    return GetAllPeopleWithoutOldest(amountToSkip, session, transaction);
                 }
+            }
+        }
+
+        private Guid SavePerson(Person person, ISession session, ITransaction transaction)
+        {
+            try
+            {
+                Guid id = (Guid)session.Save(person);
+                transaction.Commit();
+                return id;
+            }
+            catch
+            {
+                return Guid.Empty;
+            }
+        }
+
+        private Person GetPerson(Guid id, ISession session)
+        {
+            try
+            {
+                return session.Get<Person>(id);
+            }
+            catch
+            {
+                return new Person { Id = Guid.Empty };
+            }
+        }
+
+        private Person UpdatePerson(Person person, ISession session, ITransaction transaction)
+        {
+            try
+            {
+                session.Update(person);
+                Person updatedPerson = session.Get<Person>(person.Id);
+                if (updatedPerson.Id == person.Id && updatedPerson.FirstName == person.FirstName && updatedPerson.LastName == person.LastName && updatedPerson.Age == person.Age)
+                {
+                    transaction.Commit();
+                    return updatedPerson;
+                }
+                else
+                {
+                    transaction.Rollback();
+                    return new Person { Id = Guid.Empty };
+                }
+            }
+            catch
+            {
+                return new Person { Id = Guid.Empty };
+            }
+        }
+
+        private Boolean DeletePerson(Guid id, ISession session, ITransaction transaction)
+        {
+            try
+            {
+                Person person = session.Get<Person>(id);
+                session.Delete(person);
+                transaction.Commit();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private Person[] GetPeopleByAge(int age, ISession session, ITransaction transaction)
+        {
+            try
+            {
+                IQueryable<Person> people = session.Query<Person>()
+                   .Where(c => c.Age == age);
+                return people.ToArray();
+
+            }
+            catch
+            {
+                return new Person[0];
+            }
+        }
+
+        private Person[] GetOldestPeople(int amount, ISession session, ITransaction transaction)
+        {
+            try
+            {
+                IQueryable<Person> people = session.Query<Person>()
+                    .OrderByDescending(c => c.Age)
+                    .Take(amount);
+                return people.ToArray();
+            }
+            catch
+            {
+                return new Person[0];
+            }
+        }
+
+        private Person[] GetAllPeopleWithoutOldest(int amountToSkip, ISession session, ITransaction transaction)
+        {
+            try
+            {
+                IQueryable<Person> people = session.Query<Person>()
+                    .OrderByDescending(c => c.Age)
+                    .Skip(amountToSkip);
+                return people.ToArray();
+            }
+            catch
+            {
+                return new Person[0];
             }
         }
     }

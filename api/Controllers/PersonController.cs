@@ -15,7 +15,7 @@ namespace api.Controllers
 
         public PersonController(ILogger<PersonController> logger)
         {
-            _personRepo = ZadanieRekrutacyjne.NhibernateMain.GetInstance().GetPersonRepo();
+            _personRepo = NhibernateMain.GetInstance().GetPersonRepo();
             _logger = logger;
         }
 
@@ -23,28 +23,57 @@ namespace api.Controllers
         public IActionResult Get(Guid id)
         {
             Person result = this._personRepo.Get(id);
-            return Ok(result);
+            if (result.Id != Guid.Empty)
+            {
+                return Ok(result);
+
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]
         public IActionResult Post([FromBody] Person person)
         {
-            this._personRepo.Save(person);
-            return Ok();
+            Guid id = this._personRepo.Save(person);
+            if (id != Guid.Empty)
+            {
+                return Ok(id);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("{id:Guid}")]
         public IActionResult Delete(Guid id)
         {
-            this._personRepo.Delete(id);
-            return Ok();
+            Boolean success = this._personRepo.Delete(id);
+            if (success)
+            {
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpPut]
         public IActionResult Update([FromBody] Person person)
         {
-            this._personRepo.Update(person);
-            return Ok();
+            Person updatedPerson = this._personRepo.Update(person);
+            if (updatedPerson.Id != Guid.Empty)
+            {
+                return Ok(updatedPerson);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("age/{age:int}")]
